@@ -18,21 +18,21 @@ const config = process.env
             type: "mysql",
             host: config.MYSQL_HOST,
             port: 3306,
-            username: 'root',
-            password: 'Ngoquan@2003',
-            database: 'todolist',
+            username: '',
+            password: '',
+            database: '',
             entities: [User, Todo],
             synchronize: true,
         }),
         TypeOrmModule.forFeature([User, Todo]),
         MailerModule.forRoot({
             transport: {
-                host: 'smtp.gmail.com',
+                host: '',
                 port: 587,
                 secure: false,
                 auth: {
-                    user: 'appcuaquan@gmail.com',
-                    pass: 'tvbahaphnjlapmiv'
+                    user: '',
+                    pass: ''
                 }
             }
         }),
