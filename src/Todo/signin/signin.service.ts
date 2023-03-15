@@ -11,19 +11,15 @@ export class SigninService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ){}
-  async signin(login: Loginterface, req): Promise<{}> {{
-    console.log(login.username);
-    
+  async signin(data: Loginterface,): Promise<{}> {{
     const md5 = require('md5');
-    let password = md5(login.password)
+    let password = md5(data.password)
     let database = await this.userRepository.findOne({
       select: ["userName", "password", "isActivated", "userId"],
       where: {
-        userName: login.username,
+        userName: data.username,
       }
     })
-    console.log(database);
-    
     if(database.password===password && database.isActivated==true){
       let accessToken = await this.jwtService.sign({
         userId: database.userId,
@@ -37,5 +33,8 @@ export class SigninService {
     }
     
   }
-}
+  }
+  async logout(access){
+    return this.jwtService.decode(access.authorization.split(' ')[1])
+  }
 }

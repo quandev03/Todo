@@ -11,9 +11,9 @@ export class SignupController {
     async signup(@Body() body: UserDto) {
         return this.signupService.signup(body);
     }
-    @Put('verify')
+    @Post('verify')
     async verifyAccount(@Body() verifyCode: {
-        userName: string,
+        username: string,
         codeVerifyBody: string
     }) {
         return this.signupService.verifyAccount(verifyCode);
@@ -25,11 +25,11 @@ export class SignupController {
     }){
         return this.signupService.forwaitGetVerify(user);
     }
-    @Put('resetpassword')
+    @Post('resetpassword')
     async resetPassword(@Body() user : {verifyCode:string}) {
         return this.signupService.resetPassword(user);
     }
-    @Put('changepassword')
+    @Post('changepassword')
     async changePassword(@Body() password: string, @Headers() access: string){
         return this.signupService.changePassword(password, access);
     }

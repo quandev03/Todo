@@ -10,15 +10,12 @@ export class TodoService {
       @InjectRepository(Todo) private readonly todoRepository: Repository<Todo>,
       private readonly jwtService: JwtService,
     ) {}
-    async addTodo(todo, req, access) {
+    async addTodo(todo, access) {
       var idTodo = ((Math.random()*10000000).toFixed(0)).toString();
-      let accessToken =  access.authorization
-      accessToken = accessToken.split(' ')[1]
-      
-      // let accessToken=  acc
-      
+      let token =  access.authorization
+      let accessToken = token.split(' ')[1]
+
       let result = await this.jwtService.verify(accessToken)
-      console.log(result.userId);
       
       this.todoRepository.save({
         idTodo: idTodo,
@@ -27,6 +24,8 @@ export class TodoService {
         userId: result.userId,
         isCompleted: false,
       })
+      return [todo, access, result]
+      
     }
     async getTodoFromNameToDo(access, body) {
       let accessToken =  access.authorization
@@ -51,16 +50,20 @@ export class TodoService {
       })
       
     }
-    async getTodoFromUserId(access, body) {
+    async getTodoFromUserId(access) {
       let accessToken =  access.authorization
       accessToken = accessToken.split(' ')[1]
       let result = await this.jwtService.verify(accessToken)
-      return this.todoRepository.find({
-        where: {
-          userId: result.userId,
-        }
-      })
+      console.log(result);
       
+      return {
+        data: await this.todoRepository.find({
+          where: {
+            userId: result.userId,
+          }
+        }),
+        infor: result
+      }
     }
     async getTodoFromIsComplated(access, body) {
       let accessToken =  access.authorization
@@ -91,6 +94,6 @@ export class TodoService {
       let accessToken =  access.authorization
       accessToken = accessToken.split(' ')[1]
       let result = await this.jwtService.verify(accessToken)
-      return this.todoRepository.update(todo.idTodo, {isCompleted: true})
+      return this.todoRepository.update(todo.todoId, {isCompleted: true})
     }
 }

@@ -24,7 +24,7 @@ export class SignupService {
         	let userId = (Math.random()*10000000).toFixed()
 					let checkIn = await this.userRepository.find({
 						where: {
-							userName: user.userName
+							userName: user.username
 						}
 					})
 					let checkIn2 = await this.userRepository.find({
@@ -36,7 +36,7 @@ export class SignupService {
 						
 						this.userRepository.save({
 							userId: userId,
-							userName: user.userName,
+							userName: user.username,
 							email: user.mail,
 							password: password,
 							isActivated: false,
@@ -44,22 +44,20 @@ export class SignupService {
 						})
 						this.mailerSecvive.sendMail({
 							to: user.mail,
-							subject: `Welcome to ${user.userName}`,
+							subject: `Welcome to ${user.username}`,
 							text: `Your code verify is ${codeVerify}`,
 					})
 					return {Notification: 'a message send to your email, please check your inbox and verify your account'}
 					}else{
-						console.log('email already exists');
-						return error('email already exists');
+						return {Notification: 'email already exists'}
 					}
 				}
 				async verifyAccount(verifyCode) {
 					 let verifyCodeFrom = md5(verifyCode.codeVerifyBody);
-					 let userId = this.signincache.get('userId')
 					 let bd=  await this.userRepository.findOne({
 						select: ['codeVerify', 'userId' ],
 						where: {
-							userName: verifyCode.userName,
+							userName: verifyCode.username,
 						}
 					 })
 					 if(bd.codeVerify===verifyCodeFrom){
@@ -71,9 +69,11 @@ export class SignupService {
 							Notification: "verify success"
 						}
 					}else{
-						console.log('error');
-						return 'error';
+						return {
+							Notification: "error"
+						};
 					}
+					return bd
 				}
 				async forwaitGetVerify(user){
 					let createCodeVerify= (Math.random()*10000).toFixed()
@@ -111,6 +111,7 @@ export class SignupService {
 					let userId = this.jwtService.verify(accessToken).userId
 					return this.userRepository.update(userId,{password: md5(body.password)})
 				}
+				
 
 
 				

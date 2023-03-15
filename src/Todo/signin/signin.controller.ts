@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post, Req, Res, Headers } from "@nestjs/common";
 import { Loginterface } from "src/Dto/login.dto";
 import { SigninService } from "./signin.service";
 
@@ -8,8 +8,12 @@ export class SigninController {
     private readonly signinService: SigninService,
 
   ){}
-    @Get()
-    signin(@Body() login: Loginterface, @Req() req: Request): any{
-      return this.signinService.signin(login, req);
+    @Post()
+    signin(@Body() data: Loginterface): any{
+      return this.signinService.signin(data);
+    }
+    @Post('logout')
+    async logout(@Headers() access: string){
+      return this.signinService.logout(access);
     }
 }
